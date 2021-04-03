@@ -32,16 +32,18 @@ func Find(loc, rem net.Addr) (*Process, error) {
 		return nil, fmt.Errorf("unsupported address type %T", rem)
 	}
 
-	sockId, err := findSocket("/proc/net/tcp", locIp, locPort, remIp, remPort)
-	if err != nil {
-		return nil, err
+	for _, fn := range []string{"/proc/net/tcp", "/proc/net/tcp6", "/proc/net/udp", "/proc/net/udp6"} {
+		sockId, err := findSocket(fn, locIp, locPort, remIp, remPort)
+		if err != nil {
+			return nil, err
+		}
+
+		if sockId != -1 {
+			// found
+			return findProcFd(fmt.Sprintf("socket:[%d]", sockId))
+		}
 	}
 
-	if sockId == -1 {
-		// not found
-		return nil, fmt.Errorf("error finding socket: %w", os.ErrNotExist)
-	}
-
-	// need to look for: socket:[sockId]
-	return findProcFd(fmt.Sprintf("socket:[%d]", sockId))
+	// not found
+	return nil, fmt.Errorf("error finding socket: %w", os.ErrNotExist)
 }
