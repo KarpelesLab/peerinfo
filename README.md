@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/KarpelesLab/peerinfo?status.svg)](https://godoc.org/github.com/KarpelesLab/peerinfo)
+
 # peerinfo
 
 Grab information about the process of a connected TCP socket.
