@@ -46,7 +46,8 @@ func findProcFd(title string) (*Process, error) {
 
 			if lnk == title {
 				// this is the thing we were looking for
-				return &Process{Pid: int(pid), fd: int(fdInt)}, nil
+				res := &Process{Pid: int(pid), Uid: -1, Gid: -1, fd: int(fdInt)}
+				return res, nil
 			}
 		}
 	}

@@ -47,3 +47,16 @@ func Find(loc, rem net.Addr) (*Process, error) {
 	// not found
 	return nil, fmt.Errorf("error finding socket: %w", os.ErrNotExist)
 }
+
+func FindPeer(n net.Conn) (*Process, error) {
+	switch v := n.(type) {
+	case *net.TCPConn:
+		return Find(v.RemoteAddr(), v.LocalAddr())
+	case *net.UDPConn:
+		return Find(v.RemoteAddr(), v.LocalAddr())
+	case *net.UnixConn:
+		return UnixPeer(v)
+	default:
+		return nil, ErrUnsupportedConnectionType
+	}
+}
